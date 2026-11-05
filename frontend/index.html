@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System | Admin Portal</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>EduManage</h2>
+                    <span>Student Admin Portal</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#students" class="nav-item" data-section="students">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Student Records</span>
+                </a>
+                <a href="#add-student" class="nav-item" data-section="add-student">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Add Student</span>
+                </a>
+                <a href="#merit-list" class="nav-item" data-section="merit-list">
+                    <i class="fa-solid fa-award"></i>
+                    <span>Merit List</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    <span>Server: Localhost:8080</span>
+                </div>
+                <div class="db-badge">
+                    <i class="fa-solid fa-database"></i> SQLite3 Connected
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="topbar">
+                <div class="topbar-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="global-search" placeholder="Quick search by Roll No or Name..." oninput="handleGlobalSearch(this.value)">
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="academic-badge">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span>Academic Session 2024-25</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">College Administrator</span>
+                            <span class="user-role">Super Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <div class="content-body">
+                
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="section-dashboard" class="view-section active">
+                    <div class="section-header">
+                        <div>
+                            <h1>Administrative Dashboard</h1>
+                            <p class="subtitle">Real-time overview of student registrations and academic results.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="switchSection('add-student')">
+                            <i class="fa-solid fa-plus"></i> Add New Student
+                        </button>
+                    </div>
+
+                    <!-- Metrics Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card card-total">
+                            <div class="stat-content">
+                                <span class="stat-label">Total Enrolled</span>
+                                <h2 class="stat-value" id="stat-total">0</h2>
+                                <span class="stat-desc"><i class="fa-solid fa-users"></i> Registered Students</span>
+                            </div>
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-card card-passed">
+                            <div class="stat-content">
+                                <span class="stat-label">Passed Students</span>
+                                <h2 class="stat-value" id="stat-passed">0</h2>
+                                <span class="stat-desc text-success"><i class="fa-solid fa-circle-check"></i> Score &ge; 33 in all subjects</span>
+                            </div>
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-card card-failed">
+                            <div class="stat-content">
+                                <span class="stat-label">Failed Students</span>
+                                <h2 class="stat-value" id="stat-failed">0</h2>
+                                <span class="stat-desc text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Subject score &lt; 33</span>
+                            </div>
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-card card-avg">
+                            <div class="stat-content">
+                                <span class="stat-label">Batch Pass Rate</span>
+                                <h2 class="stat-value" id="stat-pass-rate">0%</h2>
+                                <span class="stat-desc"><i class="fa-solid fa-chart-line"></i> Class Avg: <b id="stat-class-avg">0%</b></span>
+                            </div>
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-percent"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Highlight Cards -->
+                    <div class="highlight-grid">
+                        <div class="highlight-card topper-card">
+                            <div class="topper-badge">
+                                <i class="fa-solid fa-crown"></i> CLASS TOPPER
+                            </div>
+                            <h3 id="stat-topper-name">No records yet</h3>
+                            <div class="topper-details">
+                                <span>Roll Number: <strong id="stat-topper-roll">-</strong></span>
+                                <span>Percentage: <strong id="stat-topper-perc" class="text-success">0.00%</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="highlight-card rules-card">
+                            <div class="rules-header">
+                                <i class="fa-solid fa-circle-info"></i> Result Criteria Guidelines
+                            </div>
+                            <ul class="rules-list">
+                                <li><strong>Pass Rule:</strong> Must obtain at least 33 marks in each of 5 subjects.</li>
+                                <li><strong>Grading Scale:</strong> A+ (90-100), A (80-89), B (70-79), C (60-69), D (50-59), F (&lt;50).</li>
+                                <li><strong>Max Marks:</strong> 100 per subject (Total 500 marks).</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Recent Students Table Preview -->
+                    <div class="card recent-table-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-clock-rotate-left"></i> Enrolled Students Summary</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="switchSection('students')">
+                                View Full Table <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Roll No</th>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Course</th>
+                                        <th>Total Marks</th>
+                                        <th>Percentage</th>
+                                        <th>Grade</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-recent-tbody">
+                                    <tr><td colspan="9" class="text-center">Loading student records...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. STUDENT RECORDS VIEW -->
+                <section id="section-students" class="view-section">
+                    <div class="section-header">
+                        <div>
+                            <h1>Student Records Management</h1>
+                            <p class="subtitle">View, search, edit, print marksheet, and delete student data.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="switchSection('add-student')">
+                            <i class="fa-solid fa-user-plus"></i> Add New Student
+                        </button>
+                    </div>
+
+                    <div class="card table-card">
+                        <div class="table-toolbar">
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="table-search-input" placeholder="Search by name, roll no, or course..." oninput="onSearchInput(this.value)">
+                            </div>
+                            <div class="filter-group">
+                                <select id="filter-course" onchange="filterRecords()">
+                                    <option value="">All Courses</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="B.Tech">B.Tech</option>
+                                    <option value="MCA">MCA</option>
+                                    <option value="B.Sc CS">B.Sc CS</option>
+                                </select>
+                                <select id="filter-status" onchange="filterRecords()">
+                                    <option value="">All Statuses</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Fail">Fail</option>
+                                </select>
+                                <button class="btn btn-secondary btn-icon" title="Refresh Table" onclick="fetchStudents()">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="data-table" id="main-students-table">
+                                <thead>
+                                    <tr>
+                                        <th>Roll No</th>
+                                        <th>ID</th>
+                                        <th>Full Name</th>
+                                        <th>Course & Sem</th>
+                                        <th>Phone</th>
+                                        <th>Total (/500)</th>
+                                        <th>Percentage</th>
+                                        <th>Grade</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-tbody">
+                                    <tr><td colspan="10" class="text-center">Loading student records...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <span id="record-count-label">Showing 0 students</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. ADD STUDENT VIEW -->
+                <section id="section-add-student" class="view-section">
+                    <div class="section-header">
+                        <div>
+                            <h1>Register New Student</h1>
+                            <p class="subtitle">Enter student personal information and academic marks.</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="switchSection('students')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Records
+                        </button>
+                    </div>
+
+                    <div class="form-container">
+                        <form id="add-student-form" onsubmit="submitAddStudent(event)">
+                            <div class="form-grid">
+                                <!-- Personal Info Card -->
+                                <div class="card form-section-card">
+                                    <div class="card-header">
+                                        <h3><i class="fa-solid fa-id-card"></i> Student Information</h3>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="add-student-id">Student ID <span class="required">*</span></label>
+                                            <input type="text" id="add-student-id" placeholder="e.g. STU106" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-roll-number">Roll Number <span class="required">*</span></label>
+                                            <input type="number" id="add-roll-number" placeholder="e.g. 106" min="1" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="add-full-name">Full Name <span class="required">*</span></label>
+                                        <input type="text" id="add-full-name" placeholder="e.g. Aryan Dixit" required>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="add-age">Age <span class="required">*</span></label>
+                                            <input type="number" id="add-age" min="15" max="70" value="20" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-course">Course <span class="required">*</span></label>
+                                            <select id="add-course" required>
+                                                <option value="BCA">BCA (Bachelor of Computer Applications)</option>
+                                                <option value="B.Tech">B.Tech (Computer Science)</option>
+                                                <option value="MCA">MCA (Master of Computer Applications)</option>
+                                                <option value="B.Sc CS">B.Sc (Computer Science)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="add-semester">Semester <span class="required">*</span></label>
+                                            <input type="number" id="add-semester" min="1" max="8" value="4" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-phone">Phone Number <span class="required">*</span></label>
+                                            <input type="tel" id="add-phone" placeholder="10-digit number" pattern="[0-9]{10,15}" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Academic Marks Card -->
+                                <div class="card form-section-card">
+                                    <div class="card-header">
+                                        <h3><i class="fa-solid fa-pen-ruler"></i> 5 Subject Marks (Max: 100 Each)</h3>
+                                    </div>
+                                    <div class="marks-input-group">
+                                        <div class="form-group">
+                                            <label>1. C++ Programming</label>
+                                            <input type="number" step="0.5" min="0" max="100" class="calc-mark" id="add-mark1" value="75" required oninput="calcPreview()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>2. Data Structures</label>
+                                            <input type="number" step="0.5" min="0" max="100" class="calc-mark" id="add-mark2" value="78" required oninput="calcPreview()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>3. Database Systems</label>
+                                            <input type="number" step="0.5" min="0" max="100" class="calc-mark" id="add-mark3" value="82" required oninput="calcPreview()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>4. Operating Systems</label>
+                                            <input type="number" step="0.5" min="0" max="100" class="calc-mark" id="add-mark4" value="70" required oninput="calcPreview()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>5. Computer Networks</label>
+                                            <input type="number" step="0.5" min="0" max="100" class="calc-mark" id="add-mark5" value="80" required oninput="calcPreview()">
+                                        </div>
+                                    </div>
+
+                                    <!-- Live Calculation Preview -->
+                                    <div class="calc-preview-box">
+                                        <div class="preview-item">
+                                            <span>Total Marks</span>
+                                            <strong id="preview-total">385 / 500</strong>
+                                        </div>
+                                        <div class="preview-item">
+                                            <span>Percentage</span>
+                                            <strong id="preview-perc">77.00%</strong>
+                                        </div>
+                                        <div class="preview-item">
+                                            <span>Calculated Grade</span>
+                                            <strong id="preview-grade" class="badge-grade grade-b">B</strong>
+                                        </div>
+                                        <div class="preview-item">
+                                            <span>Result Status</span>
+                                            <strong id="preview-status" class="badge-status status-pass">Pass</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="reset" class="btn btn-secondary" onclick="setTimeout(calcPreview, 50)">Reset Form</button>
+                                <button type="submit" class="btn btn-primary btn-lg" id="btn-save-student">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Student to SQLite
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- 4. MERIT LIST VIEW -->
+                <section id="section-merit-list" class="view-section">
+                    <div class="section-header">
+                        <div>
+                            <h1>Batch Merit List & Rank Card</h1>
+                            <p class="subtitle">Ranked students sorted automatically by aggregate percentage.</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="window.print()">
+                            <i class="fa-solid fa-print"></i> Print Merit List
+                        </button>
+                    </div>
+
+                    <div class="card table-card">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">Rank</th>
+                                        <th>Roll No</th>
+                                        <th>Student Name</th>
+                                        <th>Course</th>
+                                        <th>Total Marks</th>
+                                        <th>Percentage</th>
+                                        <th>Grade</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="merit-tbody">
+                                    <tr><td colspan="8" class="text-center">Loading merit ranking...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- EDIT STUDENT MODAL -->
+    <div class="modal-backdrop" id="edit-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Edit Student Record</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="edit-student-form" onsubmit="submitEditStudent(event)">
+                <input type="hidden" id="edit-original-roll">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Student ID</label>
+                            <input type="text" id="edit-student-id" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Roll Number</label>
+                            <input type="number" id="edit-roll-number" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="edit-full-name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="edit-age" min="15" max="70" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Course</label>
+                            <input type="text" id="edit-course" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester</label>
+                            <input type="number" id="edit-semester" min="1" max="8" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="edit-phone" required>
+                    </div>
+
+                    <h4 style="margin: 1rem 0 0.5rem; font-size: 0.95rem; color: var(--text-muted);">Five Subject Marks (0 - 100)</h4>
+                    <div class="marks-grid-5">
+                        <div class="form-group">
+                            <label>C++</label>
+                            <input type="number" step="0.5" min="0" max="100" id="edit-mark1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>DSA</label>
+                            <input type="number" step="0.5" min="0" max="100" id="edit-mark2" required>
+                        </div>
+                        <div class="form-group">
+                            <label>DBMS</label>
+                            <input type="number" step="0.5" min="0" max="100" id="edit-mark3" required>
+                        </div>
+                        <div class="form-group">
+                            <label>OS</label>
+                            <input type="number" step="0.5" min="0" max="100" id="edit-mark4" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CN</label>
+                            <input type="number" step="0.5" min="0" max="100" id="edit-mark5" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Update Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- OFFICIAL MARKSHEET MODAL -->
+    <div class="modal-backdrop" id="marksheet-modal">
+        <div class="modal-card marksheet-modal-card">
+            <div class="modal-header no-print">
+                <h3><i class="fa-solid fa-file-invoice"></i> Student Marksheet</h3>
+                <div>
+                    <button class="btn btn-secondary btn-sm" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+                    <button class="modal-close" onclick="closeMarksheetModal()">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body marksheet-print-area" id="marksheet-content">
+                <!-- Dynamically injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

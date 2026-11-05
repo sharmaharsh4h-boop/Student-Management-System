@@ -1,0 +1,12 @@
+# Binaries and object files
+*.exe
+*.o
+*.obj
+
+# Temporary test files
+test.txt
+test_*.json
+
+# OS files
+.DS_Store
+Thumbs.db

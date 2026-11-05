@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build Student Management System (Modular)",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-Iinclude",
+                "src/main.cpp",
+                "src/Student.cpp",
+                "src/StudentManager.cpp",
+                "src/Utils.cpp",
+                "-o",
+                "${workspaceFolder}/sms.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiles all modular C++ files in src/ into sms.exe using g++"
+        },
+        {
+            "type": "shell",
+            "label": "Build Student Management System (Single File)",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "main_single.cpp",
+                "-o",
+                "${workspaceFolder}/sms_single.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Compiles standalone main_single.cpp into sms_single.exe"
+        }
+    ]
+}
