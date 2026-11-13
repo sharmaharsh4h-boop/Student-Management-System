@@ -3,18 +3,25 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Build Student Management System (Modular)",
-            "command": "g++",
+            "label": "Run Web Application (Start Server)",
+            "command": "${workspaceFolder}/run.bat",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "detail": "Launches the C++ server on http://localhost:8080 and opens the browser"
+        },
+        {
+            "type": "shell",
+            "label": "Build Web Server (server.exe)",
+            "command": "cmd.exe",
             "args": [
-                "-std=c++17",
-                "-g",
-                "-Iinclude",
-                "src/main.cpp",
-                "src/Student.cpp",
-                "src/StudentManager.cpp",
-                "src/Utils.cpp",
-                "-o",
-                "${workspaceFolder}/sms.exe"
+                "/c",
+                "set PATH=C:\\tools\\mingw64\\bin;%PATH% && g++ -std=c++17 -static -Ibackend backend\\main.cpp backend\\database.cpp backend\\sqlite3.o -lws2_32 -o server.exe"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -26,27 +33,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Compiles all modular C++ files in src/ into sms.exe using g++"
-        },
-        {
-            "type": "shell",
-            "label": "Build Student Management System (Single File)",
-            "command": "g++",
-            "args": [
-                "-std=c++17",
-                "-g",
-                "main_single.cpp",
-                "-o",
-                "${workspaceFolder}/sms_single.exe"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build",
-            "detail": "Compiles standalone main_single.cpp into sms_single.exe"
+            "detail": "Compiles the C++ web server into server.exe using MinGW g++"
         }
     ]
 }
